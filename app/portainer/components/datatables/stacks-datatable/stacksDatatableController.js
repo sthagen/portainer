@@ -2,17 +2,45 @@ angular.module('portainer.app').controller('StacksDatatableController', [
   '$scope',
   '$controller',
   'DatatableService',
-  function ($scope, $controller, DatatableService) {
+  'Authentication',
+  function ($scope, $controller, DatatableService, Authentication) {
     angular.extend(this, $controller('GenericDatatableController', { $scope: $scope }));
+
+    this.filters = {
+      state: {
+        open: false,
+        enabled: false,
+        showActiveStacks: true,
+        showUnactiveStacks: true,
+      },
+    };
 
     /**
      * Do not allow external items
      */
     this.allowSelection = function (item) {
-      return !(item.External && item.Type === 2);
+      if (item.External && item.Type === 2) {
+        return false;
+      }
+
+      return !(item.External && !this.isAdmin);
     };
 
+    this.applyFilters = applyFilters.bind(this);
+    function applyFilters(stack) {
+      const { showActiveStacks, showUnactiveStacks } = this.filters.state;
+      return (stack.Status === 1 && showActiveStacks) || (stack.Status === 2 && showUnactiveStacks) || stack.External;
+    }
+
+    this.onFilterChange = onFilterChange.bind(this);
+    function onFilterChange() {
+      const { showActiveStacks, showUnactiveStacks } = this.filters.state;
+      this.filters.state.enabled = !showActiveStacks || !showUnactiveStacks;
+      DatatableService.setDataTableFilters(this.tableKey, this.filters);
+    }
+
     this.$onInit = function () {
+      this.isAdmin = Authentication.isAdmin();
       this.setDefaults();
       this.prepareTableFromDataset();
 

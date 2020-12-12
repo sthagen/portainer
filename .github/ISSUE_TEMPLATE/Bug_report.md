@@ -1,7 +1,6 @@
 ---
 name: Bug report
 about: Create a bug report
-
 ---
 
 <!--
@@ -17,7 +16,7 @@ already open. You can ensure this by searching the issue list for this
 repository. If there is a duplicate, please close your issue and add a comment
 to the existing issue instead.
 
-Also, be sure to check our FAQ and documentation first: https://portainer.readthedocs.io
+Also, be sure to check our FAQ and documentation first: https://documentation.portainer.io/
 -->
 
 **Bug description**
@@ -28,20 +27,22 @@ A clear and concise description of what you expected to happen.
 
 **Portainer Logs**
 Provide the logs of your Portainer container or Service.
-You can see how [here](https://portainer.readthedocs.io/en/stable/faq.html#how-do-i-get-the-logs-from-portainer)
+You can see how [here](https://documentation.portainer.io/archive/1.23.2/faq/#how-do-i-get-the-logs-from-portainer)
 
 **Steps to reproduce the issue:**
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
 **Technical details:**
-* Portainer version:
-* Docker version (managed by Portainer):
-* Platform (windows/linux):
-* Command used to start Portainer (`docker run -p 9000:9000 portainer/portainer`):
-* Browser:
+
+- Portainer version:
+- Docker version (managed by Portainer):
+- Platform (windows/linux):
+- Command used to start Portainer (`docker run -p 9000:9000 portainer/portainer`):
+- Browser:
 
 **Additional context**
 Add any other context about the problem here.

@@ -12,9 +12,7 @@ import (
 // Handler is the HTTP handler used to handle endpoint group operations.
 type Handler struct {
 	*mux.Router
-	EndpointService      portainer.EndpointService
-	EndpointGroupService portainer.EndpointGroupService
-	AuthorizationService *portainer.AuthorizationService
+	DataStore portainer.DataStore
 }
 
 // NewHandler creates a handler to manage endpoint group operations.

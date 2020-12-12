@@ -12,9 +12,7 @@ import (
 // Handler is the HTTP handler used to handle tag operations.
 type Handler struct {
 	*mux.Router
-	TagService           portainer.TagService
-	EndpointService      portainer.EndpointService
-	EndpointGroupService portainer.EndpointGroupService
+	DataStore portainer.DataStore
 }
 
 // NewHandler creates a handler to manage tag operations.

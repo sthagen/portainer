@@ -1,5 +1,4 @@
 import $ from 'jquery';
-import '@babel/polyfill';
 
 angular.module('portainer').run([
   '$rootScope',
@@ -17,6 +16,7 @@ angular.module('portainer').run([
     EndpointProvider.initialize();
 
     $rootScope.$state = $state;
+    $rootScope.defaultTitle = document.title;
 
     // Workaround to prevent the loading bar from going backward
     // https://github.com/chieffancypants/angular-loading-bar/issues/273
