@@ -8,5 +8,13 @@ class KubernetesCommonHelper {
       _.set(obj, path, value);
     }
   }
+
+  static ownerToLabel(owner) {
+    let label = _.replace(owner, /[^-A-Za-z0-9_.]/g, '.');
+    label = _.truncate(label, { length: 63, omission: '' });
+    label = _.replace(label, /^[-_.]*/g, '');
+    label = _.replace(label, /[-_.]*$/g, '');
+    return label;
+  }
 }
 export default KubernetesCommonHelper;

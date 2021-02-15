@@ -190,24 +190,26 @@ type (
 	// Endpoint represents a Docker endpoint with all the info required
 	// to connect to it
 	Endpoint struct {
-		ID                  EndpointID          `json:"Id"`
-		Name                string              `json:"Name"`
-		Type                EndpointType        `json:"Type"`
-		URL                 string              `json:"URL"`
-		GroupID             EndpointGroupID     `json:"GroupId"`
-		PublicURL           string              `json:"PublicURL"`
-		TLSConfig           TLSConfiguration    `json:"TLSConfig"`
-		Extensions          []EndpointExtension `json:"Extensions"`
-		AzureCredentials    AzureCredentials    `json:"AzureCredentials,omitempty"`
-		TagIDs              []TagID             `json:"TagIds"`
-		Status              EndpointStatus      `json:"Status"`
-		Snapshots           []DockerSnapshot    `json:"Snapshots"`
-		UserAccessPolicies  UserAccessPolicies  `json:"UserAccessPolicies"`
-		TeamAccessPolicies  TeamAccessPolicies  `json:"TeamAccessPolicies"`
-		EdgeID              string              `json:"EdgeID,omitempty"`
-		EdgeKey             string              `json:"EdgeKey"`
-		EdgeCheckinInterval int                 `json:"EdgeCheckinInterval"`
-		Kubernetes          KubernetesData      `json:"Kubernetes"`
+		ID                      EndpointID          `json:"Id"`
+		Name                    string              `json:"Name"`
+		Type                    EndpointType        `json:"Type"`
+		URL                     string              `json:"URL"`
+		GroupID                 EndpointGroupID     `json:"GroupId"`
+		PublicURL               string              `json:"PublicURL"`
+		TLSConfig               TLSConfiguration    `json:"TLSConfig"`
+		Extensions              []EndpointExtension `json:"Extensions"`
+		AzureCredentials        AzureCredentials    `json:"AzureCredentials,omitempty"`
+		TagIDs                  []TagID             `json:"TagIds"`
+		Status                  EndpointStatus      `json:"Status"`
+		Snapshots               []DockerSnapshot    `json:"Snapshots"`
+		UserAccessPolicies      UserAccessPolicies  `json:"UserAccessPolicies"`
+		TeamAccessPolicies      TeamAccessPolicies  `json:"TeamAccessPolicies"`
+		EdgeID                  string              `json:"EdgeID,omitempty"`
+		EdgeKey                 string              `json:"EdgeKey"`
+		EdgeCheckinInterval     int                 `json:"EdgeCheckinInterval"`
+		Kubernetes              KubernetesData      `json:"Kubernetes"`
+		ComposeSyntaxMaxVersion string              `json:"ComposeSyntaxMaxVersion"`
+		SecuritySettings        EndpointSecuritySettings
 
 		// Deprecated fields
 		// Deprecated in DBVersion == 4
@@ -270,6 +272,18 @@ type (
 	// EndpointSyncJob represents a scheduled job that synchronize endpoints based on an external file
 	// Deprecated
 	EndpointSyncJob struct{}
+
+	// EndpointSecuritySettings represents settings for an endpoint
+	EndpointSecuritySettings struct {
+		AllowBindMountsForRegularUsers            bool `json:"allowBindMountsForRegularUsers"`
+		AllowPrivilegedModeForRegularUsers        bool `json:"allowPrivilegedModeForRegularUsers"`
+		AllowVolumeBrowserForRegularUsers         bool `json:"allowVolumeBrowserForRegularUsers"`
+		AllowHostNamespaceForRegularUsers         bool `json:"allowHostNamespaceForRegularUsers"`
+		AllowDeviceMappingForRegularUsers         bool `json:"allowDeviceMappingForRegularUsers"`
+		AllowStackManagementForRegularUsers       bool `json:"allowStackManagementForRegularUsers"`
+		AllowContainerCapabilitiesForRegularUsers bool `json:"allowContainerCapabilitiesForRegularUsers"`
+		EnableHostManagementFeatures              bool `json:"enableHostManagementFeatures"`
+	}
 
 	// EndpointType represents the type of an endpoint
 	EndpointType int
@@ -515,29 +529,31 @@ type (
 
 	// Settings represents the application settings
 	Settings struct {
-		LogoURL                                   string               `json:"LogoURL"`
-		BlackListedLabels                         []Pair               `json:"BlackListedLabels"`
-		AuthenticationMethod                      AuthenticationMethod `json:"AuthenticationMethod"`
-		LDAPSettings                              LDAPSettings         `json:"LDAPSettings"`
-		OAuthSettings                             OAuthSettings        `json:"OAuthSettings"`
-		AllowBindMountsForRegularUsers            bool                 `json:"AllowBindMountsForRegularUsers"`
-		AllowPrivilegedModeForRegularUsers        bool                 `json:"AllowPrivilegedModeForRegularUsers"`
-		AllowVolumeBrowserForRegularUsers         bool                 `json:"AllowVolumeBrowserForRegularUsers"`
-		AllowHostNamespaceForRegularUsers         bool                 `json:"AllowHostNamespaceForRegularUsers"`
-		AllowDeviceMappingForRegularUsers         bool                 `json:"AllowDeviceMappingForRegularUsers"`
-		AllowStackManagementForRegularUsers       bool                 `json:"AllowStackManagementForRegularUsers"`
-		AllowContainerCapabilitiesForRegularUsers bool                 `json:"AllowContainerCapabilitiesForRegularUsers"`
-		SnapshotInterval                          string               `json:"SnapshotInterval"`
-		TemplatesURL                              string               `json:"TemplatesURL"`
-		EnableHostManagementFeatures              bool                 `json:"EnableHostManagementFeatures"`
-		EdgeAgentCheckinInterval                  int                  `json:"EdgeAgentCheckinInterval"`
-		EnableEdgeComputeFeatures                 bool                 `json:"EnableEdgeComputeFeatures"`
-		UserSessionTimeout                        string               `json:"UserSessionTimeout"`
-		EnableTelemetry                           bool                 `json:"EnableTelemetry"`
+		LogoURL                   string               `json:"LogoURL"`
+		BlackListedLabels         []Pair               `json:"BlackListedLabels"`
+		AuthenticationMethod      AuthenticationMethod `json:"AuthenticationMethod"`
+		LDAPSettings              LDAPSettings         `json:"LDAPSettings"`
+		OAuthSettings             OAuthSettings        `json:"OAuthSettings"`
+		SnapshotInterval          string               `json:"SnapshotInterval"`
+		TemplatesURL              string               `json:"TemplatesURL"`
+		EdgeAgentCheckinInterval  int                  `json:"EdgeAgentCheckinInterval"`
+		EnableEdgeComputeFeatures bool                 `json:"EnableEdgeComputeFeatures"`
+		UserSessionTimeout        string               `json:"UserSessionTimeout"`
+		EnableTelemetry           bool                 `json:"EnableTelemetry"`
 
 		// Deprecated fields
 		DisplayDonationHeader       bool
 		DisplayExternalContributors bool
+
+		// Deprecated fields v26
+		EnableHostManagementFeatures              bool `json:"EnableHostManagementFeatures"`
+		AllowVolumeBrowserForRegularUsers         bool `json:"AllowVolumeBrowserForRegularUsers"`
+		AllowBindMountsForRegularUsers            bool `json:"AllowBindMountsForRegularUsers"`
+		AllowPrivilegedModeForRegularUsers        bool `json:"AllowPrivilegedModeForRegularUsers"`
+		AllowHostNamespaceForRegularUsers         bool `json:"AllowHostNamespaceForRegularUsers"`
+		AllowStackManagementForRegularUsers       bool `json:"AllowStackManagementForRegularUsers"`
+		AllowDeviceMappingForRegularUsers         bool `json:"AllowDeviceMappingForRegularUsers"`
+		AllowContainerCapabilitiesForRegularUsers bool `json:"AllowContainerCapabilitiesForRegularUsers"`
 	}
 
 	// SnapshotJob represents a scheduled job that can create endpoint snapshots
@@ -554,6 +570,10 @@ type (
 		Env             []Pair           `json:"Env"`
 		ResourceControl *ResourceControl `json:"ResourceControl"`
 		Status          StackStatus      `json:"Status"`
+		CreationDate    int64
+		CreatedBy       string
+		UpdateDate      int64
+		UpdatedBy       string
 		ProjectPath     string
 	}
 
@@ -774,6 +794,7 @@ type (
 
 	// ComposeStackManager represents a service to manage Compose stacks
 	ComposeStackManager interface {
+		ComposeSyntaxMaxVersion() string
 		Up(stack *Stack, endpoint *Endpoint) error
 		Down(stack *Stack, endpoint *Endpoint) error
 	}
@@ -1119,9 +1140,11 @@ type (
 
 const (
 	// APIVersion is the version number of the Portainer API
-	APIVersion = "2.0.0"
+	APIVersion = "2.1.0"
 	// DBVersion is the version number of the Portainer database
-	DBVersion = 25
+	DBVersion = 26
+	// ComposeSyntaxMaxVersion is a maximum supported version of the docker compose syntax
+	ComposeSyntaxMaxVersion = "3.9"
 	// AssetsServerURL represents the URL of the Portainer asset server
 	AssetsServerURL = "https://portainer-io-assets.sfo2.digitaloceanspaces.com"
 	// MessageOfTheDayURL represents the URL where Portainer MOTD message can be retrieved

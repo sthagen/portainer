@@ -30,9 +30,9 @@ angular.module('portainer.docker').controller('CreateServiceController', [
   'RegistryService',
   'HttpRequestHelper',
   'NodeService',
-  'SettingsService',
   'WebhookService',
   'EndpointProvider',
+  'endpoint',
   function (
     $q,
     $scope,
@@ -56,9 +56,9 @@ angular.module('portainer.docker').controller('CreateServiceController', [
     RegistryService,
     HttpRequestHelper,
     NodeService,
-    SettingsService,
     WebhookService,
-    EndpointProvider
+    EndpointProvider,
+    endpoint
   ) {
     $scope.formValues = {
       Name: '',
@@ -520,6 +520,12 @@ angular.module('portainer.docker').controller('CreateServiceController', [
       return true;
     }
 
+    $scope.volumesAreValid = volumesAreValid;
+    function volumesAreValid() {
+      const volumes = $scope.formValues.Volumes;
+      return volumes.every((volume) => volume.Target && volume.Source);
+    }
+
     $scope.create = function createService() {
       var accessControlData = $scope.formValues.AccessControlData;
 
@@ -587,10 +593,9 @@ angular.module('portainer.docker').controller('CreateServiceController', [
     async function checkIfAllowedBindMounts() {
       const isAdmin = Authentication.isAdmin();
 
-      const settings = await SettingsService.publicSettings();
-      const { AllowBindMountsForRegularUsers } = settings;
+      const { allowBindMountsForRegularUsers } = endpoint.SecuritySettings;
 
-      return isAdmin || AllowBindMountsForRegularUsers;
+      return isAdmin || allowBindMountsForRegularUsers;
     }
   },
 ]);
