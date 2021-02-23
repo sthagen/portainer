@@ -12,6 +12,7 @@ import (
 	"github.com/portainer/portainer/api/cli"
 	"github.com/portainer/portainer/api/crypto"
 	"github.com/portainer/portainer/api/docker"
+
 	"github.com/portainer/portainer/api/exec"
 	"github.com/portainer/portainer/api/filesystem"
 	"github.com/portainer/portainer/api/git"
@@ -374,6 +375,10 @@ func main() {
 
 	dataStore := initDataStore(*flags.Data, fileService)
 	defer dataStore.Close()
+
+	if err := dataStore.CheckCurrentEdition(); err != nil {
+		log.Fatal(err)
+	}
 
 	jwtService, err := initJWTService(dataStore)
 	if err != nil {

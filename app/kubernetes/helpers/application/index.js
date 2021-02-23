@@ -123,9 +123,6 @@ class KubernetesApplicationHelper {
 
   static generateEnvVariablesFromEnv(env) {
     const envVariables = _.map(env, (item) => {
-      if (!item.value) {
-        return;
-      }
       const res = new KubernetesApplicationEnvironmentVariableFormValue();
       res.Name = item.name;
       res.Value = item.value;
@@ -348,6 +345,14 @@ class KubernetesApplicationHelper {
       volume.persistentVolumeClaim.claimName = name;
       app.Volumes.push(volume);
     });
+  }
+
+  static hasRWOOnly(formValues) {
+    return _.find(formValues.PersistedFolders, (item) => item.StorageClass && _.isEqual(item.StorageClass.AccessModes, ['RWO']));
+  }
+
+  static hasRWX(claims) {
+    return _.find(claims, (item) => item.StorageClass && _.includes(item.StorageClass.AccessModes, 'RWX')) !== undefined;
   }
   /* #endregion */
 
