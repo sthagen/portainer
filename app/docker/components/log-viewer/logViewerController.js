@@ -23,7 +23,7 @@ angular.module('portainer.docker').controller('LogViewerController', [
     };
 
     this.copy = function () {
-      clipboard.copyText(this.state.filteredLogs);
+      clipboard.copyText(this.state.filteredLogs.map((log) => log.line));
       $('#refreshRateChange').show();
       $('#refreshRateChange').fadeOut(2000);
     };
@@ -48,7 +48,7 @@ angular.module('portainer.docker').controller('LogViewerController', [
     };
 
     this.downloadLogs = function () {
-      const data = new Blob([_.reduce(this.state.filteredLogs, (acc, log) => acc + '\n' + log, '')]);
+      const data = new Blob([_.reduce(this.state.filteredLogs, (acc, log) => acc + '\n' + log.line, '')]);
       FileSaver.saveAs(data, this.resourceName + '_logs.txt');
     };
   },

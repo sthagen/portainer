@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import _ from 'lodash-es';
 import { KubernetesPortMapping, KubernetesPortMappingPort } from 'Kubernetes/models/port/models';
 import { KubernetesServiceTypes } from 'Kubernetes/models/service/models';
 import { KubernetesConfigurationTypes } from 'Kubernetes/models/configuration/models';
@@ -115,7 +115,11 @@ class KubernetesApplicationHelper {
     const env = _.map(envVariables, (item) => {
       const res = new KubernetesApplicationEnvPayload();
       res.name = item.Name;
-      res.value = item.Value;
+      if (item.Value === undefined) {
+        delete res.value;
+      } else {
+        res.value = item.Value;
+      }
       return res;
     });
     return env;
@@ -123,6 +127,9 @@ class KubernetesApplicationHelper {
 
   static generateEnvVariablesFromEnv(env) {
     const envVariables = _.map(env, (item) => {
+      if (item.valueFrom) {
+        return;
+      }
       const res = new KubernetesApplicationEnvironmentVariableFormValue();
       res.Name = item.name;
       res.Value = item.value;
@@ -267,7 +274,7 @@ class KubernetesApplicationHelper {
   /* #endregion */
 
   /* #region  PUBLISHED PORTS FV <> PUBLISHED PORTS */
-  static generatePublishedPortsFormValuesFromPublishedPorts(serviceType, publishedPorts) {
+  static generatePublishedPortsFormValuesFromPublishedPorts(serviceType, publishedPorts, ingress) {
     const generatePort = (port, rule) => {
       const res = new KubernetesApplicationPublishedPortFormValue();
       res.IsNew = false;
@@ -275,6 +282,7 @@ class KubernetesApplicationHelper {
         res.IngressName = rule.IngressName;
         res.IngressRoute = rule.Path;
         res.IngressHost = rule.Host;
+        res.IngressHosts = ingress && ingress.find((i) => i.Name === rule.IngressName).Hosts;
       }
       res.Protocol = port.Protocol;
       res.ContainerPort = port.TargetPort;
@@ -322,7 +330,7 @@ class KubernetesApplicationHelper {
       const pvc = _.find(persistentVolumeClaims, (item) => _.startsWith(item.Name, folder.PersistentVolumeClaimName));
       const res = new KubernetesApplicationPersistedFolderFormValue(pvc.StorageClass);
       res.PersistentVolumeClaimName = folder.PersistentVolumeClaimName;
-      res.Size = parseInt(pvc.Storage.slice(0, -2));
+      res.Size = parseInt(pvc.Storage, 10);
       res.SizeUnit = pvc.Storage.slice(-2);
       res.ContainerPath = folder.MountPath;
       return res;

@@ -1,5 +1,5 @@
 import angular from 'angular';
-import * as _ from 'lodash-es';
+import _ from 'lodash-es';
 import * as JsonPatch from 'fast-json-patch';
 import { KubernetesApplicationDataAccessPolicies, KubernetesApplicationDeploymentTypes, KubernetesApplicationTypes } from 'Kubernetes/models/application/models';
 import KubernetesEventHelper from 'Kubernetes/helpers/eventHelper';
@@ -67,8 +67,8 @@ function computeAffinities(nodes, application) {
             (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.DOES_NOT_EXIST && !exists) ||
             (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.IN && isIn) ||
             (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.NOT_IN && !isIn) ||
-            (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.GREATER_THAN && exists && parseInt(n.Labels[e.key]) > parseInt(e.values[0])) ||
-            (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.LOWER_THAN && exists && parseInt(n.Labels[e.key]) < parseInt(e.values[0]))
+            (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.GREATER_THAN && exists && parseInt(n.Labels[e.key], 10) > parseInt(e.values[0], 10)) ||
+            (e.operator === KubernetesPodNodeAffinityNodeSelectorRequirementOperators.LOWER_THAN && exists && parseInt(n.Labels[e.key], 10) < parseInt(e.values[0], 10))
           ) {
             return;
           }
@@ -106,7 +106,8 @@ class KubernetesApplicationController {
     KubernetesStackService,
     KubernetesPodService,
     KubernetesNodeService,
-    KubernetesNamespaceHelper
+    KubernetesNamespaceHelper,
+    EndpointProvider
   ) {
     this.$async = $async;
     this.$state = $state;
@@ -125,6 +126,8 @@ class KubernetesApplicationController {
 
     this.KubernetesApplicationDeploymentTypes = KubernetesApplicationDeploymentTypes;
     this.KubernetesApplicationTypes = KubernetesApplicationTypes;
+    this.EndpointProvider = EndpointProvider;
+
     this.ApplicationDataAccessPolicies = KubernetesApplicationDataAccessPolicies;
     this.KubernetesServiceTypes = KubernetesServiceTypes;
     this.KubernetesPodContainerTypes = KubernetesPodContainerTypes;
@@ -335,6 +338,7 @@ class KubernetesApplicationController {
       placementWarning: false,
       expandedNote: false,
       useIngress: false,
+      useServerMetrics: this.EndpointProvider.currentEndpoint().Kubernetes.Configuration.UseServerMetrics,
     };
 
     this.state.activeTab = this.LocalStorage.getActiveTab('application');

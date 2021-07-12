@@ -1,5 +1,5 @@
 <kubernetes-view-header title="Volume details" state="kubernetes.volumes.volume" view-ready="ctrl.state.viewReady">
-  <a ui-sref="kubernetes.resourcePools">Resource pools</a> &gt;
+  <a ui-sref="kubernetes.resourcePools">Namespaces</a> &gt;
   <a ui-sref="kubernetes.resourcePools.resourcePool({ id: ctrl.volume.ResourcePool.Namespace.Name })">{{ ctrl.volume.ResourcePool.Namespace.Name }}</a> &gt;
   <a ui-sref="kubernetes.volumes">Volumes</a> &gt; {{ ctrl.volume.PersistentVolumeClaim.Name }}
 </kubernetes-view-header>
@@ -27,7 +27,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td>Resource pool</td>
+                      <td>Namespace</td>
                       <td>
                         <a ui-sref="kubernetes.resourcePools.resourcePool({ id: ctrl.volume.ResourcePool.Namespace.Name })">{{ ctrl.volume.ResourcePool.Namespace.Name }}</a>
                         <span style="margin-left: 5px;" class="label label-info image-tag" ng-if="ctrl.isSystemNamespace(item)">system</span>
@@ -79,6 +79,7 @@
                                 ng-model="ctrl.state.volumeSize"
                                 placeholder="20"
                                 ng-min="0"
+                                min="0"
                                 ng-change="ctrl.onChangeSize()"
                                 required
                               />
@@ -100,11 +101,11 @@
                           </div>
 
                           <div class="form-inline">
-                            <div class="small text-warning" style="margin-top: 5px;" ng-show="ctrl.state.volumeSizeError || kubernetesVolumeUpdateForm.size.$invalid">
+                            <div class="small text-warning" style="margin-top: 5px;" ng-show="ctrl.state.errors.volumeSize || kubernetesVolumeUpdateForm.size.$invalid">
                               <div ng-messages="kubernetesVolumeUpdateForm.size.$error">
                                 <p ng-message="required"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> This field is required.</p>
                               </div>
-                              <p ng-show="ctrl.state.volumeSizeError && !kubernetesVolumeUpdateForm.size.$invalid"
+                              <p ng-show="ctrl.state.errors.volumeSize && !kubernetesVolumeUpdateForm.size.$invalid"
                                 ><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> The new size must be greater than the actual size.</p
                               >
                             </div>

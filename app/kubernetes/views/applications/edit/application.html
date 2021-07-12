@@ -1,5 +1,5 @@
 <kubernetes-view-header title="Application details" state="kubernetes.applications.application" view-ready="ctrl.state.viewReady">
-  <a ui-sref="kubernetes.resourcePools">Resource pools</a> &gt;
+  <a ui-sref="kubernetes.resourcePools">Namespaces</a> &gt;
   <a ui-sref="kubernetes.resourcePools.resourcePool({ id: ctrl.application.ResourcePool })">{{ ctrl.application.ResourcePool }}</a> &gt;
   <a ui-sref="kubernetes.applications">Applications</a> &gt; {{ ctrl.application.Name }}
 </kubernetes-view-header>
@@ -29,7 +29,7 @@
                       <td>{{ ctrl.application.StackName }}</td>
                     </tr>
                     <tr>
-                      <td>Resource pool</td>
+                      <td>Namespace</td>
                       <td>
                         <a ui-sref="kubernetes.resourcePools.resourcePool({ id: ctrl.application.ResourcePool })">{{ ctrl.application.ResourcePool }}</a>
                         <span style="margin-left: 5px;" class="label label-info image-tag" ng-if="ctrl.isSystemNamespace(item)">system</span>
@@ -190,14 +190,33 @@
     <div class="col-sm-12">
       <rd-widget>
         <rd-widget-body>
-          <div ng-if="!ctrl.isExternalApplication() && !ctrl.isSystemNamespace()" style="margin-bottom: 15px;">
-            <button type="button" class="btn btn-sm btn-primary" ui-sref="kubernetes.applications.application.edit" style="margin-left: 0;">
+          <div ng-if="!ctrl.isSystemNamespace()">
+            <button
+              ng-if="!ctrl.isExternalApplication()"
+              type="button"
+              class="btn btn-sm btn-primary"
+              ui-sref="kubernetes.applications.application.edit"
+              style="margin-left: 0; margin-bottom: 15px;"
+            >
               <i class="fa fa-file-code space-right" aria-hidden="true"></i>Edit this application
             </button>
-            <button type="button" class="btn btn-sm btn-primary" style="margin-left: 0;" ng-click="ctrl.redeployApplication()">
+            <button
+              ng-if="ctrl.application.ApplicationType !== ctrl.KubernetesApplicationTypes.POD"
+              type="button"
+              class="btn btn-sm btn-primary"
+              style="margin-left: 0; margin-bottom: 15px;"
+              ng-click="ctrl.redeployApplication()"
+            >
               <i class="fa fa-redo space-right" aria-hidden="true"></i>Redeploy
             </button>
-            <button type="button" class="btn btn-sm btn-primary" style="margin-left: 0;" ng-click="ctrl.rollbackApplication()" ng-disabled="ctrl.application.Revisions.length < 2">
+            <button
+              ng-if="!ctrl.isExternalApplication()"
+              type="button"
+              class="btn btn-sm btn-primary"
+              style="margin-left: 0; margin-bottom: 15px;"
+              ng-click="ctrl.rollbackApplication()"
+              ng-disabled="ctrl.application.Revisions.length < 2"
+            >
               <i class="fas fa-history space-right" aria-hidden="true"></i>Rollback to previous configuration
             </button>
           </div>
@@ -568,6 +587,7 @@
         table-key="kubernetes.application.containers"
         is-pod="ctrl.application.ApplicationType === ctrl.KubernetesApplicationTypes.POD"
         order-by="{{ ctrl.application.ApplicationType === ctrl.KubernetesApplicationTypes.POD ? 'Name' : 'PodName' }}"
+        use-server-metrics="ctrl.state.useServerMetrics"
       >
       </kubernetes-containers-datatable>
     </div>

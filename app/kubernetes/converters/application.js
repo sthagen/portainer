@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import _ from 'lodash-es';
 import filesizeParser from 'filesize-parser';
 
 import {
@@ -261,7 +261,7 @@ class KubernetesApplicationConverter {
     return res;
   }
 
-  static applicationToFormValues(app, resourcePools, configurations, persistentVolumeClaims, nodesLabels) {
+  static applicationToFormValues(app, resourcePools, configurations, persistentVolumeClaims, nodesLabels, ingresses) {
     const res = new KubernetesApplicationFormValues();
     res.ApplicationType = app.ApplicationType;
     res.ResourcePool = _.find(resourcePools, ['Namespace.Name', app.ResourcePool]);
@@ -278,7 +278,7 @@ class KubernetesApplicationConverter {
     res.PersistedFolders = KubernetesApplicationHelper.generatePersistedFoldersFormValuesFromPersistedFolders(app.PersistedFolders, persistentVolumeClaims); // generate from PVC and app.PersistedFolders
     res.Configurations = KubernetesApplicationHelper.generateConfigurationFormValuesFromEnvAndVolumes(app.Env, app.ConfigurationVolumes, configurations);
     res.AutoScaler = KubernetesApplicationHelper.generateAutoScalerFormValueFromHorizontalPodAutoScaler(app.AutoScaler, res.ReplicaCount);
-    res.PublishedPorts = KubernetesApplicationHelper.generatePublishedPortsFormValuesFromPublishedPorts(app.ServiceType, app.PublishedPorts);
+    res.PublishedPorts = KubernetesApplicationHelper.generatePublishedPortsFormValuesFromPublishedPorts(app.ServiceType, app.PublishedPorts, ingresses);
     res.Containers = app.Containers;
 
     const isIngress = _.filter(res.PublishedPorts, (p) => p.IngressName).length;
